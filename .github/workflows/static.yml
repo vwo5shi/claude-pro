@@ -1,43 +1,45 @@
-# Simple workflow for deploying static content to GitHub Pages
-name: Deploy static content to Pages
+name: 部署 README 到 GitHub Pages
 
 on:
-  # Runs on pushes targeting the default branch
   push:
     branches: ["main"]
-
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
-# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
 concurrency:
   group: "pages"
   cancel-in-progress: false
 
 jobs:
-  # Single deploy job since we're just deploying
   deploy:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: 检出代码
         uses: actions/checkout@v4
-      - name: Setup Pages
+
+      - name: 安装 Pandoc
+        run: sudo apt-get update && sudo apt-get install -y pandoc
+        # 安装 Pandoc，用于将 Markdown 转换为 HTML
+
+      - name: 将 README.md 转换为 index.html
+        run: pandoc README.md -f markdown -t html -s -o index.html
+        # 将 README.md 转换为独立的 HTML 文件
+
+      - name: 设置 Pages
         uses: actions/configure-pages@v5
-      - name: Upload artifact
+
+      - name: 上传产物
         uses: actions/upload-pages-artifact@v3
         with:
-          # Upload entire repository
-          path: '.'
-      - name: Deploy to GitHub Pages
+          path: '.'  # 上传根目录，包括生成的 index.html
+
+      - name: 部署到 GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
