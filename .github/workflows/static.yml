@@ -26,11 +26,9 @@ jobs:
 
       - name: 安装 Pandoc
         run: sudo apt-get update && sudo apt-get install -y pandoc
-        # 安装 Pandoc，用于将 Markdown 转换为 HTML
 
       - name: 将 README.md 转换为 index.html
-        run: pandoc README.md -f markdown -t html -s -o index.html
-        # 将 README.md 转换为独立的 HTML 文件
+        run: pandoc README.md -f markdown -t html -s -o index.html --metadata title="claude镜像，claude3.5Sonnet镜像，claude中文版，claude国内注册，claude国内使用"
 
       - name: 设置 Pages
         uses: actions/configure-pages@v5
@@ -38,7 +36,7 @@ jobs:
       - name: 上传产物
         uses: actions/upload-pages-artifact@v3
         with:
-          path: '.'  # 上传根目录，包括生成的 index.html
+          path: '.'
 
       - name: 部署到 GitHub Pages
         id: deployment
